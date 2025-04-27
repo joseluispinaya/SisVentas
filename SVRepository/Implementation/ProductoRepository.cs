@@ -39,7 +39,7 @@ namespace SVRepository.Implementation
                                 Nombre = dr["NombreCategoria"].ToString()!
                             },
                             Codigo = dr["Codigo"].ToString()!,
-                            Nombre = dr["Nombre"].ToString()!,
+                            Nombre = dr["NombreProduc"].ToString()!,
                             Descripcion = dr["Descripcion"].ToString()!,
                             PrecioCompra = Convert.ToDecimal(dr["PrecioCompra"]),
                             PrecioVenta = Convert.ToDecimal(dr["PrecioVenta"]),
@@ -52,16 +52,69 @@ namespace SVRepository.Implementation
             return lista;
         }
 
-        public Task<string> Crear(Producto objeto)
+        public async Task<string> Crear(Producto objeto)
         {
-            throw new NotImplementedException();
+            string respuesta = "";
+            using (var con = _conexion.ObtenerSQLConexion())
+            {
+                con.Open();
+                var cmd = new SqlCommand("sp_crearProducto", con);
+                cmd.Parameters.AddWithValue("@IdCategoria", objeto.RefCategoria!.IdCategoria);
+                cmd.Parameters.AddWithValue("@Codigo", objeto.Codigo);
+                cmd.Parameters.AddWithValue("@Nombre", objeto.Nombre);
+                cmd.Parameters.AddWithValue("@Descripcion", objeto.Descripcion);
+                cmd.Parameters.AddWithValue("@PrecioCompra", objeto.PrecioCompra);
+                cmd.Parameters.AddWithValue("@PrecioVenta", objeto.PrecioVenta);
+                cmd.Parameters.AddWithValue("@Cantidad", objeto.Cantidad);
+                cmd.Parameters.Add("@MsjError", SqlDbType.NVarChar, 100).Direction = ParameterDirection.Output;
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                    respuesta = Convert.ToString(cmd.Parameters["@MsjError"].Value)!;
+                }
+                catch
+                {
+                    respuesta = "Error rp No se pudo procesar";
+                }
+            }
+            return respuesta;
+
         }
 
-        public Task<string> Editar(Producto objeto)
+        public async Task<string> Editar(Producto objeto)
         {
-            throw new NotImplementedException();
+            string respuesta = "";
+            using (var con = _conexion.ObtenerSQLConexion())
+            {
+                con.Open();
+                var cmd = new SqlCommand("sp_editarProducto", con);
+                cmd.Parameters.AddWithValue("@IdProducto", objeto.IdProducto);
+                cmd.Parameters.AddWithValue("@IdCategoria", objeto.RefCategoria!.IdCategoria);
+                cmd.Parameters.AddWithValue("@Codigo", objeto.Codigo);
+                cmd.Parameters.AddWithValue("@Nombre", objeto.Nombre);
+                cmd.Parameters.AddWithValue("@Descripcion", objeto.Descripcion);
+                cmd.Parameters.AddWithValue("@PrecioCompra", objeto.PrecioCompra);
+                cmd.Parameters.AddWithValue("@PrecioVenta", objeto.PrecioVenta);
+                cmd.Parameters.AddWithValue("@Cantidad", objeto.Cantidad);
+                cmd.Parameters.AddWithValue("@Activo", objeto.Activo);
+                cmd.Parameters.Add("@MsjError", SqlDbType.NVarChar, 100).Direction = ParameterDirection.Output;
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                    respuesta = Convert.ToString(cmd.Parameters["@MsjError"].Value)!;
+                }
+                catch
+                {
+                    respuesta = "Error rp No se pudo procesar";
+                }
+            }
+            return respuesta;
         }
 
-        
+
     }
 }
