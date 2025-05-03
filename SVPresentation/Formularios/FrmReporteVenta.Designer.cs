@@ -37,6 +37,7 @@
             label2 = new Label();
             label1 = new Label();
             BtnExcel = new Button();
+            BtnReporteCaja = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvReporte).BeginInit();
             SuspendLayout();
             // 
@@ -89,7 +90,7 @@
             BtnBuscar.BackColor = Color.White;
             BtnBuscar.Cursor = Cursors.Hand;
             BtnBuscar.FlatStyle = FlatStyle.Flat;
-            BtnBuscar.Location = new Point(459, 80);
+            BtnBuscar.Location = new Point(429, 80);
             BtnBuscar.Name = "BtnBuscar";
             BtnBuscar.Size = new Size(75, 23);
             BtnBuscar.TabIndex = 46;
@@ -127,11 +128,25 @@
             BtnExcel.UseVisualStyleBackColor = false;
             BtnExcel.Click += BtnExcel_Click;
             // 
+            // BtnReporteCaja
+            // 
+            BtnReporteCaja.BackColor = Color.White;
+            BtnReporteCaja.Cursor = Cursors.Hand;
+            BtnReporteCaja.FlatStyle = FlatStyle.Flat;
+            BtnReporteCaja.Location = new Point(520, 80);
+            BtnReporteCaja.Name = "BtnReporteCaja";
+            BtnReporteCaja.Size = new Size(96, 23);
+            BtnReporteCaja.TabIndex = 53;
+            BtnReporteCaja.Text = "Reporte Caja";
+            BtnReporteCaja.UseVisualStyleBackColor = false;
+            BtnReporteCaja.Click += BtnReporteCaja_Click;
+            // 
             // FrmReporteVenta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(764, 407);
+            Controls.Add(BtnReporteCaja);
             Controls.Add(BtnExcel);
             Controls.Add(dgvReporte);
             Controls.Add(dtpFechaFin);
@@ -162,5 +177,6 @@
         private Label label2;
         private Label label1;
         private Button BtnExcel;
+        private Button BtnReporteCaja;
     }
 }

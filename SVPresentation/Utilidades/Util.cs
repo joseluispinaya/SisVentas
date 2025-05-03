@@ -125,5 +125,122 @@ namespace SVPresentation.Utilidades
 
             return arrayPDF;
         }
+
+
+        public static byte[] GenerarPDFDetalleVenta(Negocio oNegocio, string feInici, string feFin, List<DetalleVenta> listaDetalle)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+            string carpetaImagenes = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)!.Parent!.Parent!.Parent!.FullName, "FotosNego");
+            string rutaImagen = Path.Combine(carpetaImagenes, oNegocio.UrlLogo!);
+            byte[] imageData = File.ReadAllBytes(rutaImagen);
+
+            decimal Totalcaja = listaDetalle.Sum(x => x.PrecioTotal);
+
+            var arrayPDF = Document.Create(document =>
+            {
+                document.Page(page =>
+                {
+                    page.Margin(30);
+
+                    page.Header().ShowOnce().Row(row =>
+                    {
+                        row.AutoItem().Height(60).Image(imageData).FitArea();
+
+                        row.RelativeItem().Column(col =>
+                        {
+                            col.Item().AlignCenter().Text(oNegocio.RazonSocial).Bold().FontSize(14);
+                            col.Item().AlignCenter().Text(oNegocio.Direccion).FontSize(9);
+                            col.Item().AlignCenter().Text(oNegocio.Celular).FontSize(9);
+                            col.Item().AlignCenter().Text(oNegocio.Correo).FontSize(9);
+                        });
+
+                        row.ConstantItem(140).Column(col =>
+                        {
+                            col.Item().Border(1).BorderColor("#634883").AlignCenter().Text($"RUC {oNegocio.RUC}");
+                            col.Item().Background("#634883").Border(1).BorderColor("#634883").AlignCenter().Text("Reporte de Venta").FontColor("#fff");
+                            col.Item().Border(1).BorderColor("#634883").AlignCenter().Text("Cierre de Caja");
+                        });
+                    });
+                    //fin header
+                    page.Content().PaddingVertical(15).Column(col1 =>
+                    {
+                        col1.Spacing(10);
+                        col1.Item().LineHorizontal(0.5f);
+
+                        col1.Item().Row(row =>
+                        {
+                            row.RelativeItem().Text(txt =>
+                            {
+                                txt.Span("Fecha Inicio: ").SemiBold().FontSize(10);
+                                txt.Span(feInici).FontSize(10);
+                            });
+
+                            row.RelativeItem().Text(txt =>
+                            {
+                                txt.Span("Fecha Fin: ").SemiBold().FontSize(10);
+                                txt.Span(feFin).FontSize(10);
+                            });
+
+                        });
+
+                        col1.Item().LineHorizontal(0.5f);
+
+                        col1.Item().Table(tabla =>
+                        {
+                            tabla.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn();
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                            });
+
+                            tabla.Header(header =>
+                            {
+                                header.Cell().Background("#634883").Padding(2).Text("Nro Venta").FontColor("#fff");
+                                header.Cell().Background("#634883").Padding(2).Text("Producto").FontColor("#fff");
+                                header.Cell().Background("#634883").Padding(2).Text("Precio").FontColor("#fff");
+                                header.Cell().Background("#634883").Padding(2).Text("Cantidad").FontColor("#fff");
+                                header.Cell().Background("#634883").Padding(2).Text("Total").FontColor("#fff");
+                            });
+
+                            foreach (DetalleVenta item in listaDetalle)
+                            {
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9").Padding(2)
+                                    .Text(item.RefVenta!.NumeroVenta).FontSize(10);
+
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9").Padding(2)
+                                    .Text(item.RefProducto!.Nombre).FontSize(10);
+
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9").Padding(2)
+                                    .Text($"{oNegocio.SimboloMoneda} {item.PrecioVenta.ToString("0.00")}").FontSize(10);
+
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9").Padding(2)
+                                    .Text($"{item.Cantidad.ToString()} Ud").FontSize(10);
+
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9").Padding(2)
+                                    .Text($"{oNegocio.SimboloMoneda} {item.PrecioTotal.ToString("0.00")}").FontSize(10);
+                            }
+                        });
+
+                        col1.Item().AlignRight().Text($"Total Caja: {oNegocio.SimboloMoneda} {Totalcaja.ToString("0.00")}").FontSize(10);
+                        //aqui puedo agregar otro col1 para cantidad
+                    });
+                    //fin contenido pageContent
+
+                    page.Footer().AlignRight().Text(txt =>
+                    {
+                        txt.Span("Pagina ").FontSize(10);
+                        txt.CurrentPageNumber().FontSize(10);
+                        txt.Span(" de ").FontSize(10);
+                        txt.TotalPages().FontSize(10);
+                    });
+                });
+            }).GeneratePdf();
+
+            return arrayPDF;
+
+        }
     }
 }

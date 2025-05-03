@@ -71,6 +71,7 @@
             btnNuevoLista = new Button();
             tabLista = new TabPage();
             tabControlMain = new TabControl();
+            BtnExportarRe = new Button();
             tabEditar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)txbCantidadEditar).BeginInit();
             tabNuevo.SuspendLayout();
@@ -455,7 +456,7 @@
             // 
             btnBuscar.Cursor = Cursors.Hand;
             btnBuscar.FlatStyle = FlatStyle.Flat;
-            btnBuscar.Location = new Point(642, 18);
+            btnBuscar.Location = new Point(535, 18);
             btnBuscar.Name = "btnBuscar";
             btnBuscar.Size = new Size(75, 23);
             btnBuscar.TabIndex = 2;
@@ -465,7 +466,7 @@
             // 
             // txbBuscar
             // 
-            txbBuscar.Location = new Point(423, 18);
+            txbBuscar.Location = new Point(316, 18);
             txbBuscar.Name = "txbBuscar";
             txbBuscar.Size = new Size(203, 23);
             txbBuscar.TabIndex = 1;
@@ -484,6 +485,7 @@
             // 
             // tabLista
             // 
+            tabLista.Controls.Add(BtnExportarRe);
             tabLista.Controls.Add(dgvProductos);
             tabLista.Controls.Add(btnBuscar);
             tabLista.Controls.Add(txbBuscar);
@@ -508,6 +510,18 @@
             tabControlMain.Size = new Size(740, 344);
             tabControlMain.SizeMode = TabSizeMode.Fixed;
             tabControlMain.TabIndex = 2;
+            // 
+            // BtnExportarRe
+            // 
+            BtnExportarRe.Cursor = Cursors.Hand;
+            BtnExportarRe.FlatStyle = FlatStyle.Flat;
+            BtnExportarRe.Location = new Point(642, 18);
+            BtnExportarRe.Name = "BtnExportarRe";
+            BtnExportarRe.Size = new Size(75, 23);
+            BtnExportarRe.TabIndex = 4;
+            BtnExportarRe.Text = "Excel";
+            BtnExportarRe.UseVisualStyleBackColor = true;
+            BtnExportarRe.Click += BtnExportarRe_Click;
             // 
             // FrmProducto
             // 
@@ -580,5 +594,6 @@
         private Label label14;
         private TextBox txbCodigoEditar;
         private Label label15;
+        private Button BtnExportarRe;
     }
 }

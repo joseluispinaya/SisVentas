@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ClosedXML.Excel;
 
 namespace SVPresentation.Formularios
 {
@@ -380,6 +381,61 @@ namespace SVPresentation.Formularios
                 await MostrarProductos();
                 MostrarTab(tabLista.Name);
             }
+        }
+
+        private async void BtnExportarRe_Click(object sender, EventArgs e)
+        {
+            var listaproductos = await _productoService.Lista("");
+
+            if (listaproductos.Count == 0)
+            {
+                MessageBox.Show("No existen productos");
+                return;
+            }
+
+            DataTable tabla = new DataTable();
+            tabla.Columns.Add("Codigo", typeof(string));
+            tabla.Columns.Add("Nombre", typeof(string));
+            tabla.Columns.Add("Descripcion", typeof(string));
+            tabla.Columns.Add("Precio Compra", typeof(decimal));
+            tabla.Columns.Add("Precio Venta", typeof(decimal));
+            tabla.Columns.Add("Cantidad", typeof(int));
+
+            foreach (var item in listaproductos)
+            {
+                tabla.Rows.Add(
+                    item.Codigo,
+                    item.Nombre,
+                    item.Descripcion,
+                    item.PrecioCompra,
+                    item.PrecioVenta,
+                    item.Cantidad
+                );
+            }
+
+            using (SaveFileDialog saveFile = new SaveFileDialog())
+            {
+                //saveFile.FileName = $"ReporteProductos_{DateTime.Now.ToString("ddMMyyyyHHmmss")}.xlsx";
+                saveFile.FileName = $"ReporteProductos_{DateTime.Now:ddMMyyyyHHmmss}.xlsx";
+                saveFile.Filter = "Excel files|*.xlsx";
+
+                if (saveFile.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        XLWorkbook wb = new XLWorkbook();
+                        var hoja = wb.Worksheets.Add(tabla, "Productos");
+                        hoja.ColumnsUsed().AdjustToContents();
+                        wb.SaveAs(saveFile.FileName);
+                        MessageBox.Show("Reporte generado", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Error al generar reporte", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                }
+            }
+
         }
     }
 }
