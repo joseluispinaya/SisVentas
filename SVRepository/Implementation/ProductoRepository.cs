@@ -115,6 +115,80 @@ namespace SVRepository.Implementation
             return respuesta;
         }
 
+        public async Task<Producto> Obtener(string codigo)
+        {
+            Producto objeto = new Producto();
+            using (var con = _conexion.ObtenerSQLConexion())
+            {
+                con.Open();
+                var cmd = new SqlCommand("sp_obtenerProducto", con);
+                cmd.Parameters.AddWithValue("@Codigo", codigo);
+                cmd.CommandType = CommandType.StoredProcedure;
 
+                using (var dr = await cmd.ExecuteReaderAsync())
+                {
+                    if (await dr.ReadAsync())
+                    {
+                        objeto = new Producto()
+                        {
+                            IdProducto = Convert.ToInt32(dr["IdProducto"]),
+                            RefCategoria = new Categoria
+                            {
+                                Nombre = dr["NombreCategoria"].ToString()!,
+                                RefMedida = new Medida
+                                {
+                                    Equivalente = dr["Equivalente"].ToString()!,
+                                    Valor = Convert.ToInt32(dr["Valor"])
+                                }
+                            },
+                            Codigo = dr["Codigo"].ToString()!,
+                            Nombre = dr["NombreProducto"].ToString()!,
+                            Descripcion = dr["Descripcion"].ToString()!,
+                            PrecioVenta = Convert.ToDecimal(dr["PrecioVenta"]),
+                            Cantidad = Convert.ToInt32(dr["Cantidad"]),
+                        };
+                    }
+                }
+            }
+            return objeto;
+        }
+
+        public async Task<Producto> ObtenerporId(int idProducto)
+        {
+            Producto objeto = new Producto();
+            using (var con = _conexion.ObtenerSQLConexion())
+            {
+                con.Open();
+                var cmd = new SqlCommand("sp_obtenerProductoId", con);
+                cmd.Parameters.AddWithValue("@IdProducto", idProducto);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                using (var dr = await cmd.ExecuteReaderAsync())
+                {
+                    if (await dr.ReadAsync())
+                    {
+                        objeto = new Producto()
+                        {
+                            IdProducto = Convert.ToInt32(dr["IdProducto"]),
+                            RefCategoria = new Categoria
+                            {
+                                Nombre = dr["NombreCategoria"].ToString()!,
+                                RefMedida = new Medida
+                                {
+                                    Equivalente = dr["Equivalente"].ToString()!,
+                                    Valor = Convert.ToInt32(dr["Valor"])
+                                }
+                            },
+                            Codigo = dr["Codigo"].ToString()!,
+                            Nombre = dr["NombreProducto"].ToString()!,
+                            Descripcion = dr["Descripcion"].ToString()!,
+                            PrecioVenta = Convert.ToDecimal(dr["PrecioVenta"]),
+                            Cantidad = Convert.ToInt32(dr["Cantidad"]),
+                        };
+                    }
+                }
+            }
+            return objeto;
+        }
     }
 }
